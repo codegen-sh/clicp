@@ -6,7 +6,7 @@ A TypeScript-based CLI tool that allows models to interact with various Model Co
 
 - 🚀 TypeScript-based CLI with full type safety
 - 📦 Distributed on npm as `clicp`
-- 🔧 Built-in support for popular MCP servers (filesystem, git)
+- 🔧 Built-in support for popular MCP servers (filesystem, git, github, postgres)
 - 🎨 Beautiful colored output with chalk
 - ✅ Comprehensive testing with Jest
 - 🔍 Code formatting with Prettier
@@ -32,6 +32,8 @@ clicp list
 ```bash
 clicp filesystem list
 clicp git list
+clicp github list
+clicp postgres list
 ```
 
 ## Available MCP Servers
@@ -47,6 +49,22 @@ clicp git list
 - **git_status**: Get git repository status
 - **git_log**: Get git commit history
 - **git_diff**: Get git diff for changes
+
+### GitHub Server
+
+- **create_or_update_file**: Create or update a single file in a repository
+- **get_file_contents**: Get contents of a file or directory
+- **create_issue**: Create a new issue
+- **create_pull_request**: Create a new pull request
+- **search_repositories**: Search for GitHub repositories
+
+*Note: Requires `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable*
+
+### PostgreSQL Server
+
+- **query**: Execute read-only SQL queries against the connected database
+
+*Note: Requires `POSTGRES_CONNECTION_STRING` environment variable (defaults to `postgresql://localhost/postgres`)*
 
 ## Development
 
