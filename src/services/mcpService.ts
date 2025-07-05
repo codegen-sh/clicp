@@ -31,6 +31,27 @@ export class MCPService {
       args: ['@modelcontextprotocol/server-git'],
       status: 'active',
     });
+
+    // GitHub MCP server
+    this.servers.set('github', {
+      name: 'github',
+      description: 'GitHub API operations for repository management, file operations, and search',
+      command: 'npx',
+      args: ['@modelcontextprotocol/server-github'],
+      env: {
+        GITHUB_PERSONAL_ACCESS_TOKEN: process.env.GITHUB_PERSONAL_ACCESS_TOKEN || '',
+      },
+      status: 'active',
+    });
+
+    // PostgreSQL MCP server
+    this.servers.set('postgres', {
+      name: 'postgres',
+      description: 'PostgreSQL database operations and schema inspection',
+      command: 'npx',
+      args: ['@modelcontextprotocol/server-postgres', process.env.POSTGRES_CONNECTION_STRING || 'postgresql://localhost/postgres'],
+      status: 'active',
+    });
   }
 
   /**
@@ -152,6 +173,108 @@ export class MCPService {
                 },
               },
               required: ['repo_path'],
+            },
+            server: serverName,
+          },
+        ];
+
+      case 'github':
+        return [
+          {
+            name: 'create_or_update_file',
+            description: 'Create or update a single file in a repository',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                owner: { type: 'string', description: 'Repository owner (username or organization)' },
+                repo: { type: 'string', description: 'Repository name' },
+                path: { type: 'string', description: 'Path where to create/update the file' },
+                content: { type: 'string', description: 'Content of the file' },
+                message: { type: 'string', description: 'Commit message' },
+                branch: { type: 'string', description: 'Branch to create/update the file in' },
+                sha: { type: 'string', description: 'SHA of file being replaced (for updates)' },
+              },
+              required: ['owner', 'repo', 'path', 'content', 'message', 'branch'],
+            },
+            server: serverName,
+          },
+          {
+            name: 'get_file_contents',
+            description: 'Get contents of a file or directory',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                owner: { type: 'string', description: 'Repository owner' },
+                repo: { type: 'string', description: 'Repository name' },
+                path: { type: 'string', description: 'Path to file/directory' },
+                branch: { type: 'string', description: 'Branch to get contents from' },
+              },
+              required: ['owner', 'repo', 'path'],
+            },
+            server: serverName,
+          },
+          {
+            name: 'create_issue',
+            description: 'Create a new issue',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                owner: { type: 'string', description: 'Repository owner' },
+                repo: { type: 'string', description: 'Repository name' },
+                title: { type: 'string', description: 'Issue title' },
+                body: { type: 'string', description: 'Issue description' },
+                assignees: { type: 'array', items: { type: 'string' }, description: 'Usernames to assign' },
+                labels: { type: 'array', items: { type: 'string' }, description: 'Labels to add' },
+              },
+              required: ['owner', 'repo', 'title'],
+            },
+            server: serverName,
+          },
+          {
+            name: 'create_pull_request',
+            description: 'Create a new pull request',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                owner: { type: 'string', description: 'Repository owner' },
+                repo: { type: 'string', description: 'Repository name' },
+                title: { type: 'string', description: 'PR title' },
+                body: { type: 'string', description: 'PR description' },
+                head: { type: 'string', description: 'Branch containing changes' },
+                base: { type: 'string', description: 'Branch to merge into' },
+                draft: { type: 'boolean', description: 'Create as draft PR' },
+              },
+              required: ['owner', 'repo', 'title', 'head', 'base'],
+            },
+            server: serverName,
+          },
+          {
+            name: 'search_repositories',
+            description: 'Search for GitHub repositories',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                query: { type: 'string', description: 'Search query' },
+                page: { type: 'number', description: 'Page number for pagination' },
+                perPage: { type: 'number', description: 'Results per page (max 100)' },
+              },
+              required: ['query'],
+            },
+            server: serverName,
+          },
+        ];
+
+      case 'postgres':
+        return [
+          {
+            name: 'query',
+            description: 'Execute read-only SQL queries against the connected database',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                sql: { type: 'string', description: 'The SQL query to execute' },
+              },
+              required: ['sql'],
             },
             server: serverName,
           },
