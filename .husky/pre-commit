@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run TypeScript compiler check
+yarn tsc --noEmit
+
+# Run prettier and lint-staged
+yarn lint-staged
+
