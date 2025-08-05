@@ -1,6 +1,6 @@
 # CLICP - CLI Context Protocol
 
-A TypeScript-based CLI tool that allows models to interact with various Model Context Protocol (MCP) servers.
+A TypeScript-based CLI tool that allows models to interact with various Model Context Protocol (MCP) servers
 
 ## Features
 
